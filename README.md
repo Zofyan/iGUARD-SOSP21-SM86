@@ -1,3 +1,4 @@
+Update by Zofyan: updated detector to work with the NVBit 1.5.3 and adding support for SM 8.0 and 8.6
 # iGUARD: <ins>I</ins>n-<ins>G</ins>P<ins>U</ins> <ins>A</ins>dvanced <ins>R</ins>ace <ins>D</ins>etection
 We provide the source code and the setup for iGUARD, a tool to detect races in GPU programs. iGUARD instruments GPU programs to detect races in them. It uses NVIDIA's NVBit [[1]](#references), a GPU binary instrumenter, as the framework for instrumentation. 
 
