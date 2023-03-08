@@ -170,7 +170,7 @@ void instrument_function_if_needed(CUcontext ctx, CUfunction func) {
         /* iterate on all the static instructions in the function */
         for (auto instr : instrs) {
             if (cnt < instr_begin_interval || cnt >= instr_end_interval ||
-                    (instr->getMemOpType() == Instr::memOpType::NONE && 
+                    (instr->getMemorySpace() == InstrType::MemorySpace::NONE &&
                     !isBarrier(instr) && !isFence(instr) && !(isWarpBar(instr) && check_its))) {
                 cnt++;
                 continue;
@@ -186,7 +186,7 @@ void instrument_function_if_needed(CUcontext ctx, CUfunction func) {
                  * arguments */
                 nvbit_insert_call(instr, "instrument_barrier", IPOINT_AFTER);
                 /* predicate value */
-                nvbit_add_call_arg_pred_val(instr);
+                nvbit_add_call_arg_guard_pred_val(instr);
                 nvbit_add_call_arg_const_val64(instr, (uint64_t)&counters[BARRIER]);
                 continue;
             }
@@ -196,7 +196,7 @@ void instrument_function_if_needed(CUcontext ctx, CUfunction func) {
                  * arguments */
                 nvbit_insert_call(instr, "instrument_fence", IPOINT_BEFORE);
                 /* predicate value */
-                nvbit_add_call_arg_pred_val(instr);
+                nvbit_add_call_arg_guard_pred_val(instr);
                 nvbit_add_call_arg_const_val32(instr, getScope(instr));
                 nvbit_add_call_arg_const_val64(instr, (uint64_t)&counters[WARP_CTRS]);
                 nvbit_add_call_arg_const_val64(instr, (uint64_t)&counters[LOCKS]);
@@ -209,7 +209,7 @@ void instrument_function_if_needed(CUcontext ctx, CUfunction func) {
                  * arguments */
                 nvbit_insert_call(instr, "instrument_warp_bar", IPOINT_BEFORE);
                 /* predicate value */
-                nvbit_add_call_arg_pred_val(instr);
+                nvbit_add_call_arg_guard_pred_val(instr);
                 nvbit_add_call_arg_const_val64(instr, (uint64_t)&counters[WARP_BAR]);                
                 continue;            
             }
@@ -238,16 +238,16 @@ void instrument_function_if_needed(CUcontext ctx, CUfunction func) {
             /* iterate on the operands */
             for (int i = 0; i < instr->getNumOperands(); i++) {
                 /* get the operand "i" */
-                const Instr::operand_t *op = instr->getOperand(i);
+                const InstrType::operand_t *op = instr->getOperand(i);
 
-                if (op->type == Instr::operandType::MREF && 
-                    (instr->getMemOpType() == Instr::memOpType::GENERIC
-                    || instr->getMemOpType() == Instr::memOpType::GLOBAL)) {
+                if (op->type == InstrType::OperandType::MREF &&
+                    (instr->getMemorySpace() == InstrType::MemorySpace::GENERIC
+                    || instr->getMemorySpace() == InstrType::MemorySpace::GLOBAL)) {
                     /* insert call to the instrumentation function with its
                      * arguments */
                     nvbit_insert_call(instr, "instrument_mem", IPOINT_BEFORE);
                     /* predicate value */
-                    nvbit_add_call_arg_pred_val(instr);
+                    nvbit_add_call_arg_guard_pred_val(instr);
                     /* opcode id */
                     nvbit_add_call_arg_const_val32(instr, opcode_id);
                     /* memory reference 64 bit address */
