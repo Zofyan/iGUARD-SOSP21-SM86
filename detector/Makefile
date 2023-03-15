@@ -18,7 +18,7 @@ SOURCES=$(wildcard *.cu)
 
 OBJECTS=$(SOURCES:.cu=.o)
 ARCH=70
-COMP=-arch=compute_60 -code=sm_70
+COMP=-arch=compute_86 -code=sm_86
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
