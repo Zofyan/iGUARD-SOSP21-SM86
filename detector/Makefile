@@ -17,7 +17,7 @@ NVCC_PATH=-L $(subst bin/nvcc,lib64,$(shell which nvcc | tr -s /))
 SOURCES=$(wildcard *.cu)
 
 OBJECTS=$(SOURCES:.cu=.o)
-ARCH=70
+ARCH=86
 COMP=-arch=compute_86 -code=sm_86
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
